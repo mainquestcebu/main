@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Najarin Translator V.10</title>
+  <title>Najarin Translator</title>
 
 <style>
   body {
@@ -98,7 +98,7 @@
 
 <div id="app">
 
-<h3>English to Najarin</h3>
+<h3>English to Najarin V1.1</h3>
 
 <textarea id="input" rows="4" placeholder="Type English here..."></textarea>
 
@@ -107,15 +107,38 @@
   <div id="output"></div>
 </div>
 
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  
-  <p id="lexiconCount" style="margin:0; color:black;">
+<div style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  width: 30vw;
+  max-width: 900px;
+
+  margin-top: 10px;
+  padding: 10px 12px;
+
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+
+  color: white;
+">
+
+  <!-- LEFT: Lexicon -->
+  <p id="lexiconCount" style="margin:0; color:white;">
     <b>Current Lexicon Size:</b> Loading...
   </p>
 
+  <!-- RIGHT: Copyright (now visually tied closer to lexicon via flex spacing control) -->
   <a href="https://www.worldanvil.com/w/najarune-mainquestcebu" 
      target="_blank"
-     style="font-size:14px; opacity:0.7; color:#black; text-decoration:none;">
+     style="
+       font-size:14px;
+       opacity:0.8;
+       color:white;
+       text-decoration:none;
+       margin-left:auto;
+     ">
     © MainQuest Cebu
   </a>
 
