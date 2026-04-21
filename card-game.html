@@ -1,0 +1,525 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MainQuest Cebu: The Card Game</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
+
+<style>
+
+@keyframes backgroundAnimation {
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+body{
+background-image:url('https://wa-cdn.nyc3.digitaloceanspaces.com/user-data/production/533e590a-d50a-4172-8359-fb6cedf8448e/uploads/images/3a838bbd5a293b42233cb74a83b89136.jpeg');
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+background-attachment:fixed;
+animation:backgroundAnimation 30s ease infinite;
+color:white;
+font-family:Arial,sans-serif;
+text-align:center;
+padding:40px;
+}
+
+h1{
+color:gold;
+font-size:42px;
+margin-bottom:10px;
+font-family:'Uncial Antiqua',cursive;
+text-shadow:2px 2px 4px rgba(0,0,0,0.7);
+}
+
+h2{
+color:white;
+font-size:20px;
+margin-top:0;
+margin-bottom:30px;
+}
+
+.gameArea{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+}
+
+.card{
+position:relative;
+padding:90px 40px 40px 40px;
+width:500px;
+max-width:90%;
+min-height:260px;
+border-radius:14px;
+background:rgba(0,0,0,0.7);
+box-shadow:0 10px 25px rgba(0,0,0,0.7);
+border:3px solid rgba(255,255,255,0.15);
+transition:transform .6s ease,opacity .6s ease;
+transform-style:preserve-3d;
+opacity:0;
+transform:translateY(20px);
+}
+
+.card.visible{
+opacity:1;
+transform:translateY(0);
+}
+
+.card.flip{
+transform:rotateY(180deg);
+}
+
+.label{
+position:absolute;
+top:0;
+padding:14px 20px;
+font-family:Georgia,serif;
+font-weight:bold;
+letter-spacing:4px;
+font-size:52px;
+}
+
+#quest{color:white;font-size:38px;line-height:1.4;}
+.questLabel{left:0;background:rgba(0,0,0,0.7);border-bottom-right-radius:10px;}
+
+#conditionsCard{background:rgba(245,222,179,0.5);}
+#conditions{color:black;font-size:28px;text-align:left;}
+.conditionLabel{right:0;background:rgba(245,222,179,0.5);color:black;border-bottom-left-radius:10px;}
+
+.conditionItem{margin:18px 0;}
+.bullet{color:#d32f2f;font-size:30px;margin-right:10px;}
+
+button{
+padding:15px 26px;
+font-size:18px;
+margin:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+transition:.2s;
+}
+
+button:hover{transform:scale(1.15);}
+
+.questBtn{background:#C6A100;color:white;}
+.addCondBtn{background:#ff5722;color:white;}
+.resetBtn{background:#224419;color:white;}
+.timerBtn{background:#2196F3;color:white;}
+.diceBtn{background:#9C27B0;color:white;}
+
+/* Fullscreen button specific */
+.fullscreenBtn{
+background:#292e1e;
+color:white;
+border-radius:8px;
+padding:15px 26px;
+font-size:18px;
+transition:.2s;
+}
+
+.fullscreenBtn:hover{
+transform:scale(1.15);
+}
+
+button span.shortcut{
+text-decoration:underline;
+font-weight:bold;
+color:yellow;
+}
+
+/* TIMER */
+
+#timerDisplay{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(0);
+background:rgba(255,235,59,0.9);
+padding:30px 50px;
+border-radius:50%;
+font-size:60px;
+font-weight:bold;
+color:black;
+z-index:1000;
+opacity:0;
+transition:opacity .3s,transform .3s;
+}
+
+#timerDisplay.visible{
+opacity:1;
+transform:translate(-50%,-50%) scale(1);
+}
+
+/* DICE MODAL */
+
+#diceModal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+z-index:9999;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+color:white;
+}
+
+#diceCheckLabel{
+font-size:60px;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+#diceResult{
+font-size:200px;
+font-weight:bold;
+}
+
+#diceModal button{
+font-size:24px;
+padding:10px 20px;
+margin-top:20px;
+background:#9C27B0;
+color:white;
+}
+
+/* NAJARUNE LORE */
+
+#loreBox{
+margin-top:30px;
+max-width:800px;
+margin-left:auto;
+margin-right:auto;
+padding:20px;
+background:rgba(0,0,0,0.6);
+border-radius:10px;
+border:2px solid rgba(255,255,255,0.2);
+}
+
+#loreLabel{
+font-family:'Uncial Antiqua',cursive;
+color:#ffd54f;
+font-size:22px;
+margin-bottom:10px;
+}
+
+#loreText{
+opacity:0;
+transition:opacity .6s;
+font-size:20px;
+}
+
+#loreText.visible{
+opacity:1;
+}
+
+.links{
+margin-top:40px;
+font-size:16px;
+}
+
+.links a{
+color:#ffd54f;
+text-decoration:none;
+font-weight:bold;
+}
+
+.links a:hover{text-decoration:underline;}
+
+/* QR CODE */
+
+#qrCode {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+    height: auto;
+    z-index: 10000;
+    border: 3px solid rgba(255,255,255,0.5);
+    border-radius: 8px;
+    background: rgba(0,0,0,0.4);
+    padding: 5px;
+}
+
+/* Move QR code up on smaller screens to avoid overlapping buttons */
+@media (max-width: 1024px) {
+    #qrCode {
+        bottom: 100px; /* moves it up on tablets */
+        width: 100px;  /* optional: make smaller */
+    }
+}
+
+@media (max-width: 600px) {
+    #qrCode {
+        bottom: 120px; /* move up even more on phones */
+        width: 80px;   /* optional smaller QR code */
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>MainQuest Cebu: The Card Game</h1>
+<h2>Create your character, draw a Quest and Conditions, then roleplay your solution!</h2>
+
+<!-- BUTTON SOUNDS -->
+<script>
+const questSound = new Audio("https://github.com/mainquestcebu/mainquest-game/raw/refs/heads/main/bryansantosbreton-critical-tension-cinematic-braam-impact-184273.mp3");
+const addCondSound = new Audio("https://github.com/mainquestcebu/mainquest-game/raw/refs/heads/main/universfield-scary-string-tension-454849.mp3");
+const diceSound = new Audio("https://github.com/mainquestcebu/mainquest-game/raw/refs/heads/main/u_qpfzpydtro-dice-142528.mp3");
+const resetSound = new Audio("https://github.com/mainquestcebu/mainquest-game/raw/refs/heads/main/yodguard-healing-magic-6-378666.mp3");
+
+function playQuest(){
+    questSound.currentTime = 0;
+    questSound.play();
+}
+
+function playAddCond(){
+    addCondSound.currentTime = 0;
+    addCondSound.play();
+}
+
+function playDice(){
+    diceSound.currentTime = 0;
+    diceSound.play();
+}
+
+function playReset(){
+    resetSound.currentTime = 0;
+    resetSound.play();
+}
+</script>
+
+<div class="gameArea">
+
+<div class="card" id="questCard">
+<div class="label questLabel">QUEST</div>
+<div id="quest">Loading...</div>
+</div>
+
+<div class="card" id="conditionsCard">
+<div class="label conditionLabel">CONDITIONS</div>
+<div id="conditions"></div>
+</div>
+
+</div>
+<button class="questBtn" onclick="playQuest(); drawQuest()"><span class="shortcut">Q</span>uest</button>
+<button class="addCondBtn" onclick="playAddCond(); addCondition()"><span class="shortcut">A</span>dd Condition</button>
+<button class="resetBtn" onclick="playReset(); resetCards()"><span class="shortcut">R</span>eset</button>
+<button class="timerBtn" onclick="playClick(); toggleTimer()"><span class="shortcut">T</span>imer</button>
+<button class="diceBtn" onclick="playDice(); rollDice()">Roll <span class="shortcut">D</span>ice</button>
+<button class="fullscreenBtn" onclick="playClick(); toggleFullscreen()"><span class="shortcut">F</span>ullscreen</button>
+
+<div id="timerDisplay"></div>
+
+<div id="diceModal">
+<div id="diceCheckLabel">DICE CHECK</div>
+<div id="diceResult">1</div>
+<button onclick="playClick();closeDice()"><span class="shortcut">C</span>lose</button>
+</div>
+
+<div id="loreBox">
+<div id="loreLabel">NAJARUNE LORE</div>
+<div id="loreText">Loading lore...</div>
+</div>
+
+<!-- QR CODE -->
+<img id="qrCode" src="https://wa-cdn.nyc3.digitaloceanspaces.com/user-data/production/533e590a-d50a-4172-8359-fb6cedf8448e/uploads/images/4664036c7c7bb9b0e6eb584498593bd5.png" alt="QR Code">
+
+<script>
+
+/* CLICK SOUND */
+const clickSound = new Audio("https://assets.mixkit.co/active_storage/sfx/1113/1113-preview.mp3")
+
+function playClick(){
+clickSound.currentTime=0
+clickSound.play()
+}
+
+let quests=[]
+let conditions=[]
+let loreEntries=[]
+let questDeck=[]
+let currentConditions=[]
+
+let timer
+let timerDuration=90
+let timerRunning=false
+
+const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vT__78o0fLlbWZW4fFoAeXf1XaewNw6mB2NnnoegV_EZS1Wny9oDGV1jPlTy6QQCoSm-pRaN-tidl_k/pub?output=csv"
+
+fetch(sheetURL)
+.then(res=>res.text())
+.then(data=>{
+let rows=data.trim().split("\n")
+rows.forEach(row=>{
+let cols=row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+let quest=cols[0]?.replace(/"/g,"").trim()
+let condition=cols[1]?.replace(/"/g,"").trim()
+let lore=cols[2]?.replace(/"/g,"").trim()
+if(quest)quests.push(quest)
+if(condition)conditions.push(condition)
+if(lore)loreEntries.push(lore)
+})
+resetDeck()
+rotateLore()
+setInterval(rotateLore,25000)
+document.getElementById("quest").innerText="Ready"
+})
+
+function resetDeck(){ questDeck=[...quests] }
+
+function animateCard(id){
+let card=document.getElementById(id)
+card.classList.add("flip")
+setTimeout(()=>{card.classList.remove("flip")},400)
+}
+
+function drawQuest(){
+if(questDeck.length===0)resetDeck()
+let index=Math.floor(Math.random()*questDeck.length)
+let q=questDeck.splice(index,1)[0]
+document.getElementById("quest").innerHTML=`<b style="color:yellow">${q.split(" ")[0]}</b>`+q.substring(q.indexOf(" "))
+animateCard("questCard")
+document.getElementById("conditions").innerHTML=""
+currentConditions=[]
+document.getElementById("questCard").classList.add("visible")
+document.getElementById("conditionsCard").classList.add("visible")
+rotateLore()
+}
+
+function addCondition(){
+if(currentConditions.length>=3)return
+let available=conditions.filter(c=>!currentConditions.includes(c))
+if(available.length===0)return
+let c=available[Math.floor(Math.random()*available.length)]
+currentConditions.push(c)
+renderConditions()
+animateCard("conditionsCard")
+}
+
+function renderConditions(){
+let html=""
+currentConditions.forEach(c=>{
+html+=`<div class="conditionItem"><span class="bullet">●</span>${c}</div>`
+})
+document.getElementById("conditions").innerHTML=html
+}
+
+function resetCards(){
+currentConditions=[]
+document.getElementById("quest").innerHTML=""
+document.getElementById("conditions").innerHTML=""
+resetDeck()
+document.getElementById("questCard").classList.remove("visible")
+document.getElementById("conditionsCard").classList.remove("visible")
+clearInterval(timer)
+document.getElementById("timerDisplay").classList.remove("visible")
+timerRunning=false
+}
+
+function toggleTimer(){
+if(timerRunning){
+clearInterval(timer)
+document.getElementById("timerDisplay").classList.remove("visible")
+timerRunning=false
+}else{
+startTimer()
+timerRunning=true
+}
+}
+
+function startTimer(){
+clearInterval(timer)
+let timeLeft=timerDuration
+const display=document.getElementById("timerDisplay")
+display.innerText=formatTime(timeLeft)
+display.classList.add("visible")
+timer=setInterval(()=>{
+timeLeft--
+display.innerText=formatTime(timeLeft)
+if(timeLeft<=0){
+clearInterval(timer)
+display.classList.remove("visible")
+timerRunning=false
+}
+},1000)
+}
+
+function formatTime(seconds){
+let m=Math.floor(seconds/60)
+let s=seconds%60
+return `${m}:${s<10?'0':''}${s}`
+}
+
+/* DICE */
+function rollDice(){
+    let modal = document.getElementById("diceModal");
+    let result = document.getElementById("diceResult");
+    modal.style.display = "flex";
+    let rolls = 0;
+    let interval = setInterval(()=>{
+        result.innerText = Math.floor(Math.random()*12)+1; // <-- change 6 to 12
+        rolls++;
+        if(rolls>=15) clearInterval(interval);
+    },50);
+}
+function closeDice(){
+document.getElementById("diceModal").style.display="none"
+}
+
+/* FULLSCREEN */
+function toggleFullscreen(){
+if(!document.fullscreenElement){
+document.documentElement.requestFullscreen()
+}else{
+document.exitFullscreen()
+}
+}
+
+/* SHORTCUT KEYS */
+document.addEventListener("keydown", function(e){
+let key = e.key.toLowerCase()
+if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return
+switch(key){
+case "q": playClick(); drawQuest(); break
+case "a": playClick(); addCondition(); break
+case "r": playClick(); resetCards(); break
+case "t": playClick(); toggleTimer(); break
+case "d": playClick(); rollDice(); break
+case "c":
+if(document.getElementById("diceModal").style.display === "flex"){
+playClick(); closeDice()
+}
+break
+case "f": playClick(); toggleFullscreen(); break
+}
+})
+
+/* LORE */
+function rotateLore(){
+if(loreEntries.length===0)return
+let lore=loreEntries[Math.floor(Math.random()*loreEntries.length)]
+let loreText=document.getElementById("loreText")
+loreText.classList.remove("visible")
+setTimeout(()=>{
+loreText.innerText=`"${lore}"`
+loreText.classList.add("visible")
+},400)
+}
+
+</script>
+<br>
+MainQuest Cebu © 2026 Cebu SaberSturm Academy<br><br>
+
+</body>
+</html>
