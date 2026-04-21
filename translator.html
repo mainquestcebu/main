@@ -112,7 +112,7 @@
   justify-content:space-between;
   align-items:center;
 
-  width: 30vw;
+  width: 50vw;
   max-width: 900px;
 
   margin-top: 10px;
@@ -126,7 +126,7 @@
 
   <!-- LEFT: Lexicon -->
   <p id="lexiconCount" style="margin:0; color:white;">
-    <b>Current Lexicon Size:</b> Loading...
+    <b>Lexicon Count:</b> Loading...
   </p>
 
   <!-- RIGHT: Copyright (now visually tied closer to lexicon via flex spacing control) -->
@@ -186,7 +186,7 @@ function parseCSV(csv){
   phrases.sort((a,b)=>b.length-a.length);
 
   document.getElementById("lexiconCount").innerHTML =
-    `<b>Current Lexicon Size:</b> ${count}`;
+    `<b>Lexicon Count:</b> ${count}`;
 }
 
 /* ========================= */
