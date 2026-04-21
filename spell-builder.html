@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MainQuest Cebu Spell Builder</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: #e8e8e8;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    background-image: url("https://wa-cdn.nyc3.digitaloceanspaces.com/user-data/production/533e590a-d50a-4172-8359-fb6cedf8448e/uploads/images/3a838bbd5a293b42233cb74a83b89136.jpeg");
+    background-size: cover;
+    background-repeat: repeat-x;
+    animation: scrollBG 30s linear infinite alternate;
+  }
+
+  @keyframes scrollBG {
+    0% { background-position: left center; }
+    100% { background-position: right center; }
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+  }
+
+  /* TITLE (editable) */
+  #appTitle {
+    font-size: 14px;
+    font-weight: 700;
+    opacity: 0.95;
+    font-family: 'Cinzel', serif;
+    color: black;
+    background: rgba(255,255,255,0.35);
+    padding: 6px 12px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+  }
+
+  .spell-box {
+    font-family: 'Cinzel', serif;
+    font-size: 44px;
+    padding: 22px 32px;
+    border: 2px solid #3a3a55;
+    border-radius: 12px;
+    min-width: 60%;
+    text-align: center;
+    background: rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
+  }
+
+  .spell-glow {
+    box-shadow: 0 0 18px rgba(180,180,255,0.4);
+    border-color: #8888ff;
+  }
+
+  .dropdown-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* LABELS (editable style) */
+  label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: black;
+    font-weight: 700;
+    background: rgba(255,255,255,0.35);
+    padding: 4px 8px;
+    border-radius: 6px;
+    backdrop-filter: blur(4px);
+  }
+
+  select {
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #1a1a22;
+    color: #fff;
+    min-width: 180px;
+  }
+
+  select option {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  select:disabled {
+    opacity: 0.4;
+  }
+
+  .button-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  button {
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    background: #2a2a44;
+    color: white;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #3a3a66;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TITLE (EDIT HERE EASILY) -->
+  <div id="appTitle">MainQuest Cebu Spell Builder</div>
+
+  <!-- SPELL DISPLAY -->
+  <div id="spellDisplay" class="spell-box">Select a Root to begin</div>
+
+  <!-- DROPDOWNS -->
+  <div class="dropdown-row">
+
+    <div class="field">
+      <label id="label-modifier">Modifier</label>
+      <select id="modifier" disabled></select>
+    </div>
+
+    <div class="field">
+      <label id="label-root">Root *</label>
+      <select id="root"></select>
+    </div>
+
+    <div class="field">
+      <label id="label-form">Form</label>
+      <select id="form" disabled></select>
+    </div>
+
+    <div class="field">
+      <label id="label-execution">Execution</label>
+      <select id="execution" disabled></select>
+    </div>
+
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="button-row">
+    <button onclick="resetAll()">Reset</button>
+    <button onclick="copySpell()">Copy Spell</button>
+  </div>
+
+</div>
+
+<audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/1113/1113-preview.mp3"></audio>
+
+<script>
+const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTRTO3aEMLc3o51AgHRfRisnreZ9cevGR4CR1BOY7IjbQDEXE21N1iA3EMFsPM6vXbP-UT_Z2cIqp1/pub?gid=0&single=true&output=tsv";
+
+let data = [];
+
+const modifierSel = document.getElementById('modifier');
+const rootSel = document.getElementById('root');
+const execSel = document.getElementById('execution');
+const formSel = document.getElementById('form');
+const display = document.getElementById('spellDisplay');
+const clickSound = document.getElementById('clickSound');
+
+function playClick() {
+  clickSound.currentTime = 0;
+  clickSound.play();
+}
+
+function parseTSV(text) {
+  return text.trim().split('\n').map(r => {
+    const c = r.split('\t');
+    return {
+      modEng: c[0], modSpell: c[1],
+      rootEng: c[2], rootSpell: c[3],
+      execEng: c[4], execSpell: c[5],
+      formEng: c[6], formSpell: c[7]
+    };
+  });
+}
+
+function fill(select, items, eng, spell) {
+  select.innerHTML = '<option value="">--</option>';
+  const seen = new Set();
+
+  items.forEach(i => {
+    if (!i[eng] || seen.has(i[eng])) return;
+    seen.add(i[eng]);
+
+    const opt = document.createElement('option');
+    opt.value = i[spell];
+    opt.textContent = i[eng];
+    opt.title = i[spell];
+    select.appendChild(opt);
+  });
+}
+
+function capitalize(word) {
+  return word ? word.charAt(0).toUpperCase() + word.slice(1) : "";
+}
+
+function animateSpell(parts) {
+  const mod = parts.mod ? capitalize(parts.mod) + "-" : "";
+  const root = capitalize(parts.root);
+  const exec = parts.exec || "";
+  const form = parts.form || "";
+
+  const finalText = mod + root + exec + form;
+
+  display.textContent = "";
+  let i = 0;
+
+  function step() {
+    display.textContent += finalText[i];
+    i++;
+    if (i < finalText.length) {
+      setTimeout(step, 20);
+    } else {
+      display.classList.add('spell-glow');
+      setTimeout(() => display.classList.remove('spell-glow'), 300);
+    }
+  }
+
+  step();
+}
+
+function update() {
+  playClick();
+
+  const root = rootSel.value;
+  const form = formSel.value;
+  const exec = execSel.value;
+  const mod = modifierSel.value;
+
+  // START STATE (no root selected)
+  if (!root) {
+    formSel.disabled = true;
+    execSel.disabled = true;
+    modifierSel.disabled = true;
+    display.textContent = "Select a Root to begin";
+    return;
+  }
+
+  // ROOT SELECTED
+  formSel.disabled = false;
+  modifierSel.disabled = false;
+
+  if (!form) {
+    execSel.disabled = true;
+    execSel.value = "";
+  } else {
+    execSel.disabled = false;
+  }
+
+  // VALID COMBINATIONS
+  let valid = false;
+
+  if (mod && root && form && exec) valid = true;
+  if (mod && root && !form && !exec) valid = true;
+  if (root && form && !exec) valid = true;
+  if (root && form && exec) valid = true;
+
+  // INVALID STATE HANDLING
+  if (!valid) {
+    // only clear AFTER user has started (root exists)
+    display.textContent = "";
+    return;
+  }
+
+  animateSpell({ mod, root, exec, form });
+}
+
+function resetAll() {
+  playClick();
+
+  modifierSel.value = "";
+  rootSel.value = "";
+  execSel.value = "";
+  formSel.value = "";
+
+  modifierSel.disabled = true;
+  execSel.disabled = true;
+  formSel.disabled = true;
+
+  display.textContent = "Select a Root to begin";
+}
+
+function copySpell() {
+  playClick();
+
+  const text = display.textContent;
+  if (!text || text.includes("Select")) return;
+  navigator.clipboard.writeText(text);
+}
+
+async function init() {
+  const res = await fetch(TSV_URL);
+  const text = await res.text();
+
+  data = parseTSV(text);
+
+  fill(modifierSel, data, 'modEng', 'modSpell');
+  fill(rootSel, data, 'rootEng', 'rootSpell');
+  fill(execSel, data, 'execEng', 'execSpell');
+  fill(formSel, data, 'formEng', 'formSpell');
+
+  rootSel.addEventListener('change', update);
+  modifierSel.addEventListener('change', update);
+  execSel.addEventListener('change', update);
+  formSel.addEventListener('change', update);
+}
+
+init();
+</script>
+
+</body>
+</html>
