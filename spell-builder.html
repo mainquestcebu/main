@@ -37,7 +37,6 @@
     width: 100%;
   }
 
-  /* TITLE (editable) */
   #appTitle {
     font-size: 14px;
     font-weight: 700;
@@ -80,7 +79,6 @@
     align-items: center;
   }
 
-  /* LABELS (editable style) */
   label {
     font-size: 13px;
     margin-bottom: 4px;
@@ -136,13 +134,10 @@
 
 <div class="app">
 
-  <!-- TITLE (EDIT HERE EASILY) -->
   <div id="appTitle">MainQuest Cebu Spell Builder</div>
 
-  <!-- SPELL DISPLAY -->
   <div id="spellDisplay" class="spell-box">Select a Root to begin</div>
 
-  <!-- DROPDOWNS -->
   <div class="dropdown-row">
 
     <div class="field">
@@ -167,7 +162,6 @@
 
   </div>
 
-  <!-- BUTTONS -->
   <div class="button-row">
     <button onclick="resetAll()">Reset</button>
     <button onclick="copySpell()">Copy Spell</button>
@@ -259,7 +253,7 @@ function update() {
   const exec = execSel.value;
   const mod = modifierSel.value;
 
-  // START STATE (no root selected)
+  // ROOT REQUIRED
   if (!root) {
     formSel.disabled = true;
     execSel.disabled = true;
@@ -268,33 +262,24 @@ function update() {
     return;
   }
 
-  // ROOT SELECTED
+  // ENABLE AFTER ROOT
   formSel.disabled = false;
   modifierSel.disabled = false;
+  execSel.disabled = false;
 
-  if (!form) {
-    execSel.disabled = true;
-    execSel.value = "";
-  } else {
-    execSel.disabled = false;
-  }
-
-  // VALID COMBINATIONS
-  let valid = false;
-
-  if (mod && root && form && exec) valid = true;
-  if (mod && root && !form && !exec) valid = true;
-  if (root && form && !exec) valid = true;
-  if (root && form && exec) valid = true;
-
-  // INVALID STATE HANDLING
-  if (!valid) {
-    // only clear AFTER user has started (root exists)
-    display.textContent = "";
+  // 🚫 BLOCK ROOT-ONLY (NEW RULE)
+  if (!mod && !form && !exec) {
+    display.textContent = ""; // or keep previous text if you want
     return;
   }
 
-  animateSpell({ mod, root, exec, form });
+  // BUILD SPELL
+  animateSpell({
+    mod: mod,
+    root: root,
+    exec: exec,
+    form: form
+  });
 }
 
 function resetAll() {
