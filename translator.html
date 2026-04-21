@@ -26,13 +26,19 @@
   }
 
   textarea {
-    width: 95%;
-    font-size: 20px;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    margin-bottom: 10px;
-  }
+  width: 100%;
+  font-size: clamp(22px, 4.5vw, 26px);
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 10px;
+
+  resize: none;
+  overflow-y: auto;
+
+  min-height: 2.8em;   /* ~4 rows */
+  max-height: 10.6em;   /* ~8 rows */
+}
 
   #lexiconCount {
     font-size: 16px;
@@ -46,7 +52,7 @@
   }
 
   #output {
-    font-size: 22px;
+    font-size: clamp(22px, 4.5vw, 26px);
     white-space: pre-wrap;
     width: 100%;
     padding: 18px;
@@ -100,7 +106,7 @@
 
 <h3>English to Najarin V1.1</h3>
 
-<textarea id="input" rows="4" placeholder="Type English here..."></textarea>
+<textarea id="input" rows="2" placeholder="Type English here..."></textarea>
 
 <div id="outputContainer">
   <button id="copyBtn" title="Copy">⧉</button>
@@ -367,12 +373,21 @@ function translate(text){
 /* ========================= */
 let timeout;
 
-document.getElementById("input").addEventListener("input", e => {
+const textarea = document.getElementById("input");
+
+textarea.addEventListener("input", e => {
+
+  // 🔥 AUTO RESIZE
+  textarea.style.height = "auto";
+  textarea.style.height = textarea.scrollHeight + "px";
+
+  // 🔥 YOUR EXISTING TRANSLATION (unchanged)
   clearTimeout(timeout);
   timeout = setTimeout(() => {
     document.getElementById("output").innerHTML =
       translate(e.target.value);
   }, 150);
+
 });
 
 /* ========================= */
@@ -416,4 +431,4 @@ loadDictionary();
 
 </div>
 </body>
-</html>
+</html><!DOCTYPE html>
