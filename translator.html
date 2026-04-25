@@ -21,11 +21,13 @@
   }
 
   #app {
-    max-width: 900px;
-    width: 100%;
-  }
+  max-width: 900px;
+  width: 100%;
+  padding: 0 10px; /* 👈 gives breathing room on mobile */
+  box-sizing: border-box;
+}
 
-  textarea {
+textarea {
   width: 100%;
   font-size: clamp(30px, 4.5vw, 33px);
   padding: 12px;
@@ -36,8 +38,10 @@
   resize: none;
   overflow-y: auto;
 
-  min-height: 2.8em;   /* ~4 rows */
-  max-height: 10.6em;   /* ~8 rows */
+  min-height: 2.8em;
+  max-height: 10.6em;
+
+  box-sizing: border-box;
 }
 
   #lexiconCount {
@@ -105,7 +109,7 @@
 
 <div id="app">
 
-<h3>English to Najarin V1.3</h3>
+<h3>English to Najarin V1.4</h3>
 
 <textarea id="input" rows="2" placeholder="Type English here..."></textarea>
 
