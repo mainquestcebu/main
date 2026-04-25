@@ -4,10 +4,6 @@
   <title>Najarin Translator</title>
 
 <style>
-  html, body {
-    height: 100%;
-  }
-
   body {
     font-family: Arial;
     padding: 20px;
@@ -27,13 +23,8 @@
   #app {
   max-width: 900px;
   width: 100%;
-  padding: 0 10px;
+  padding: 0 10px; /* 👈 gives breathing room on mobile */
   box-sizing: border-box;
-
-  /* 🔥 ADDED FOR MOBILE VERTICAL FILL */
-  min-height: 90vh;
-  display: flex;
-  flex-direction: column;
 }
 
 textarea {
@@ -62,11 +53,6 @@ textarea {
     margin-top: 10px;
     width: 100%;
     position: relative;
-
-    /* 🔥 ADDED so output expands vertically */
-    flex: 1;
-    display: flex;
-    flex-direction: column;
   }
 
   #output {
@@ -149,10 +135,12 @@ textarea {
   color: white;
 ">
 
+  <!-- LEFT: Lexicon -->
   <p id="lexiconCount" style="margin:0; color:white;">
     <b>Lexicon Count:</b> Loading...
   </p>
 
+  <!-- RIGHT: Copyright (now visually tied closer to lexicon via flex spacing control) -->
   <a href="https://www.worldanvil.com/w/najarune-mainquestcebu" 
      target="_blank"
      style="
@@ -318,6 +306,7 @@ function caps(orig, trans, sentenceStart){
 }
 
 /* ========================= */
+/* 🔥 PHRASE SYSTEM RESTORED HERE */
 function translate(text){
 
   let lines = text.split(/\n/);
@@ -393,9 +382,11 @@ const textarea = document.getElementById("input");
 
 textarea.addEventListener("input", e => {
 
+  // 🔥 AUTO RESIZE
   textarea.style.height = "auto";
   textarea.style.height = textarea.scrollHeight + "px";
 
+  // 🔥 YOUR EXISTING TRANSLATION (unchanged)
   clearTimeout(timeout);
   timeout = setTimeout(() => {
     document.getElementById("output").innerHTML =
@@ -423,5 +414,26 @@ document.getElementById("copyBtn").addEventListener("click", () => {
 loadDictionary();
 </script>
 
+ <div style="margin-top:20px; padding:1px; border-radius:10px; background-color:rgba(0, 0, 0, 0.5); color:#f3e9ff; font-family:Arial; width:70%; max-width:900px; font-size:14px;">
+
+  <h3 style="text-align:center; margin-top:0;">Tips</h3>
+
+  <ul style="line-height:1.6; font-size:14px;">
+    <li>Do not use contractions.</li>
+    <li>If word missing, try a synonym.</li>
+    <li>Get creative. Build new words from compound words. Example: Gay + Dinosaur = Ostrich</li>
+    <li>Use "may_month" for the month of May.</li>
+    <li>Lexicon is regularly updated so check Lexicon count</li>
+    <li>
+      Pronunciation Guide: 
+      <a href="https://docs.google.com/document/d/12hGSLpqYpqhPx1kYaaB8vqTf5hKmUcCMatb8JKADXtE/edit?usp=sharing"
+         target="_blank"
+         style="font-weight:bold; color:#f3e9ff; text-decoration:underline;">
+        Open Guide
+      </a>
+    </li>
+  </ul>
+
+</div>
 </body>
-</html>
+</html><!DOCTYPE html>
