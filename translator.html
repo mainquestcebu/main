@@ -109,7 +109,7 @@ textarea {
 
 <div id="app">
 
-<h3>English to Najarin V1.4</h3>
+<h3>English to Najarin V1.5</h3>
 
 <textarea id="input" rows="2" placeholder="Type English here..."></textarea>
 
@@ -224,21 +224,75 @@ function tokenize(t){
 function morph(word){
   let w = norm(word);
   let suffix = "";
+  let prefixRe = false;
+  let prefixLess = false;
 
-  if(w.endsWith("ing")){ w=w.slice(0,-3); suffix="ing"; }
-  else if(w.endsWith("ed")){ w=w.slice(0,-2); suffix="ed"; }
-  else if(w.endsWith("er")){ w=w.slice(0,-2); suffix="er"; }
-  else if(w.endsWith("s") && w.length>3){ w=w.slice(0,-1); suffix="s"; }
+  /* ---------- PREFIX RULES ---------- */
+  if(w.startsWith("re")){
+    w = w.slice(2);
+    prefixRe = true;
+  }
+
+  /* ---------- SUFFIX RULES (longest first) ---------- */
+  if(w.endsWith("less")){
+    w = w.slice(0, -4);
+    suffix = "less";
+  }
+  else if(w.endsWith("ing")){
+    w = w.slice(0, -3);
+    suffix = "ing";
+  }
+  else if(w.endsWith("ed")){
+    w = w.slice(0, -2);
+    suffix = "ed";
+  }
+  else if(w.endsWith("er")){
+    w = w.slice(0, -2);
+    suffix = "er";
+  }
+  else if(w.endsWith("s") && w.length > 3){
+    w = w.slice(0, -1);
+    suffix = "s";
+  }
+  else if(w.endsWith("y")){
+    w = w.slice(0, -1);
+    suffix = "y";
+  }
+  else if(w.endsWith("e")){
+    w = w.slice(0, -1);
+    suffix = "e";
+  }
 
   let root = dictionary[w];
   if(!root) return null;
 
-  if(suffix==="ing") return root+"ir";
-  if(suffix==="ed") return root+"ar";
-  if(suffix==="er") return root+"or";
-  if(suffix==="s") return root+"is";
+  /* ---------- PREFIX APPLICATION ---------- */
+  let result = root;
 
-  return root;
+  if(prefixRe){
+    result = "pret" + result;
+  }
+
+  if(suffix === "less"){
+    result = "mal" + result;
+    return result;
+  }
+
+  /* ---------- SUFFIX TRANSFORMS ---------- */
+  if(suffix === "ing") return result + "in";
+  if(suffix === "ed") return result + "er";
+  if(suffix === "er") return result + "nor";
+  if(suffix === "s") return result + "is";
+
+  if(suffix === "y"){
+    return result + (root.endsWith("e") ? "th" : "eth");
+  }
+
+  if(suffix === "e"){
+    return result + "ic";
+  }
+
+  return result;
 }
 
 /* ========================= */
@@ -419,6 +473,8 @@ loadDictionary();
   <h3 style="text-align:center; margin-top:0;">Tips</h3>
 
   <ul style="line-height:1.6; font-size:14px;">
+    <li>Do not focus on words. Focus on clear intent.</li>
+    <li>Simplify sentences as a direct message.</li>
     <li>Do not use contractions.</li>
     <li>If word missing, try a synonym.</li>
     <li>Get creative. Build new words from compound words. Example: Gay + Dinosaur = Ostrich</li>
