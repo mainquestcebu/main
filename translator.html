@@ -258,6 +258,10 @@ function morph(word){
     w = w.slice(0, -2);
     suffix = "ly";
   }
+  else if(w.endsWith("r")){
+    w = w.slice(0, -1);
+    suffix = "r";
+  }
   else if(w.endsWith("s") && w.length > 3){
     w = w.slice(0, -1);
     suffix = "s";
@@ -290,6 +294,7 @@ function morph(word){
   if(suffix === "ing") return result + "in";
   if(suffix === "ed") return result + "er";
   if(suffix === "er") return result + "nor";
+  if(suffix === "r") return result + "nor";
   if(suffix === "s") return result + "is";
 
   if(suffix === "ly") return result + "in";
