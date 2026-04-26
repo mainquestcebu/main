@@ -238,6 +238,10 @@ function morph(word){
     w = w.slice(0, -4);
     suffix = "less";
   }
+  else if(w.endsWith("ness")){
+    w = w.slice(0, -4);
+    suffix = "ness";
+  }
   else if(w.endsWith("ing")){
     w = w.slice(0, -3);
     suffix = "ing";
@@ -249,6 +253,10 @@ function morph(word){
   else if(w.endsWith("er")){
     w = w.slice(0, -2);
     suffix = "er";
+  }
+  else if(w.endsWith("ly")){
+    w = w.slice(0, -2);
+    suffix = "ly";
   }
   else if(w.endsWith("s") && w.length > 3){
     w = w.slice(0, -1);
@@ -270,7 +278,7 @@ function morph(word){
   let result = root;
 
   if(prefixRe){
-    result = "pret" + result;
+    result = "ret" + result;
   }
 
   if(suffix === "less"){
@@ -283,6 +291,12 @@ function morph(word){
   if(suffix === "ed") return result + "er";
   if(suffix === "er") return result + "nor";
   if(suffix === "s") return result + "is";
+
+  if(suffix === "ly") return result + "in'";
+
+  if(suffix === "ness"){
+    return result + (result.endsWith("e") ? "th" : "eth");
+  }
 
   if(suffix === "y"){
     return result + (root.endsWith("e") ? "th" : "eth");
