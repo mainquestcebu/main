@@ -109,7 +109,7 @@ textarea {
 
 <div id="app">
 
-<h3>English to Najarin V1.5</h3>
+<h3>English to Najarin V1.6</h3>
 
 <textarea id="input" rows="2" placeholder="Type English here..."></textarea>
 
@@ -348,6 +348,11 @@ function resolveCompound(word){
 function translateWord(word){
   let key = word.toLowerCase();
   if(cache.has(key)) return cache.get(key);
+
+  // 🔥 FIX: single "a" override
+  if(norm(word) === "a"){
+    return { text: "len", missing: false };
+  }
 
   let result;
   let w = norm(word);
